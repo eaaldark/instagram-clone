@@ -1,0 +1,51 @@
+version: "3.1"
+
+services:
+  db:
+    image: postgres:14.5-alpine3.16
+    environment:
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+
+  backend:
+    build:
+      context: ./
+      dockerfile: dockerfile.backend
+    container_name: backend
+    volumes:
+      - ./backend:/api
+    ports:
+      - 3256:3000
+    user: node
+    tty: true
+
+  frontend:
+    build:
+      context: ./
+      dockerfile: dockerfile.frontent
+    container_name: frontent
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 3684:3000
+    user: node
+    tty: true
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 3897:80
+    volumes:
+      - pgadmindata:/var/lib/pgadmin/
+
+volumes:
+  pgdata:
+    external: false
+  pgadmindata:
+    external: false

@@ -1,0 +1,18 @@
+FROM node:16.17.0-alpine3.16
+
+ARG USERNAME=node
+
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+RUN apk --no-cache add shadow
+
+RUN groupmod --gid $USER_GID $USERNAME \
+    && usermod --uid $USER_UID --gid $USER_GID $USERNAME \
+    && chown -R $USER_UID:$USER_GID /home/$USERNAME
+
+RUN npm install -g react-scripts
+
+WORKDIR /app
+
+USER $USERNAME
